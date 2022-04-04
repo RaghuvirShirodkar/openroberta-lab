@@ -1,11 +1,13 @@
-package de.fhg.iais.roberta.visitor.collect;
-
-import java.util.List;
+package de.fhg.iais.roberta.visitor.validate;
 
 import com.google.common.collect.ClassToInstanceMap;
 
 import de.fhg.iais.roberta.bean.IProjectBean;
-import de.fhg.iais.roberta.syntax.Phrase;
+import de.fhg.iais.roberta.components.ConfigurationAst;
+
+import de.fhg.iais.roberta.syntax.action.light.LightAction;
+import de.fhg.iais.roberta.syntax.action.light.LightStatusAction;
+
 import de.fhg.iais.roberta.syntax.actors.arduino.bob3.BodyLEDAction;
 import de.fhg.iais.roberta.syntax.actors.arduino.bob3.LedOffAction;
 import de.fhg.iais.roberta.syntax.actors.arduino.bob3.LedOnAction;
@@ -14,18 +16,20 @@ import de.fhg.iais.roberta.syntax.actors.arduino.bob3.ReceiveIRAction;
 import de.fhg.iais.roberta.syntax.actors.arduino.bob3.RememberAction;
 import de.fhg.iais.roberta.syntax.actors.arduino.bob3.SendIRAction;
 import de.fhg.iais.roberta.syntax.sensor.generic.PinTouchSensor;
+import de.fhg.iais.roberta.syntax.sensor.generic.TimerSensor;
+
 import de.fhg.iais.roberta.syntax.sensors.arduino.bob3.CodePadSensor;
 import de.fhg.iais.roberta.visitor.hardware.INIBOVisitor;
 
-/**
- * This visitor collects information for used actors and sensors in blockly program.
- *
- * @author VinArt
- */
-public final class Bob3UsedHardwareCollectorVisitor extends AbstractUsedHardwareCollectorVisitor implements INIBOVisitor<Void> {
+public class NIBOValidatorAndCollectorVisitor extends CommonNepoValidatorAndCollectorVisitor implements INIBOVisitor<Void> {
 
-    public Bob3UsedHardwareCollectorVisitor(List<List<Phrase<Void>>> phrasesSet, ClassToInstanceMap<IProjectBean.IBuilder<?>> beanBuilders) {
-        super(null, beanBuilders);
+    public NIBOValidatorAndCollectorVisitor(ConfigurationAst brickConfiguration, ClassToInstanceMap<IProjectBean.IBuilder<?>> beanBuilders) {
+        super(brickConfiguration, beanBuilders);
+    }
+
+    @Override
+    public Void visitPinTouchSensor(PinTouchSensor<Void> pinTouchSensor) {
+        return null;
     }
 
     @Override
@@ -40,6 +44,7 @@ public final class Bob3UsedHardwareCollectorVisitor extends AbstractUsedHardware
 
     @Override
     public Void visitSendIRAction(SendIRAction<Void> sendIRAction) {
+        requiredComponentVisited(sendIRAction, sendIRAction.getCode());
         return null;
     }
 
@@ -50,6 +55,7 @@ public final class Bob3UsedHardwareCollectorVisitor extends AbstractUsedHardware
 
     @Override
     public Void visitRememberAction(RememberAction<Void> rememberAction) {
+        requiredComponentVisited(rememberAction, rememberAction.getCode());
         return null;
     }
 
@@ -59,17 +65,28 @@ public final class Bob3UsedHardwareCollectorVisitor extends AbstractUsedHardware
     }
 
     @Override
-    public Void visitPinTouchSensor(PinTouchSensor<Void> pinTouchSensor) {
+    public Void visitLedOffAction(LedOffAction<Void> ledOffAction) {
         return null;
     }
 
     @Override
     public Void visitLedOnAction(LedOnAction<Void> ledOnAction) {
+        requiredComponentVisited(ledOnAction, ledOnAction.getLedColor());
         return null;
     }
 
     @Override
-    public Void visitLedOffAction(LedOffAction<Void> ledOffAction) {
+    public Void visitLightAction(LightAction<Void> lightAction) {
+        return null;
+    }
+
+    @Override
+    public Void visitLightStatusAction(LightStatusAction<Void> lightStatusAction) {
+        return null;
+    }
+
+    @Override
+    public Void visitTimerSensor(TimerSensor<Void> timerSensor) {
         return null;
     }
 }
